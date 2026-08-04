@@ -1,0 +1,27 @@
+<svg viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="140" fill="transparent"/>
+  <defs>
+    <pattern id="green-stripes" width="3" height="3" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="3" stroke="#106135" stroke-width="1" />
+    </pattern>
+  </defs>
+
+  <!-- Gold Roof Outline -->
+  <polyline points="50,55 100,25 150,55" stroke="#cca550" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" />
+  <line x1="50" y1="55" x2="50" y2="65" stroke="#cca550" stroke-width="2.5" />
+  <line x1="150" y1="55" x2="150" y2="65" stroke="#cca550" stroke-width="2.5" />
+
+  <!-- Striped Left Mountain -->
+  <polygon points="35,85 75,45 90,60 50,100" fill="url(#green-stripes)" />
+
+  <!-- Solid Right Mountain -->
+  <polygon points="120,40 85,75 100,90 120,70 145,95 160,80" fill="#106135" />
+
+  <!-- Text: MARHABA HOME -->
+  <text x="100" y="112" text-anchor="middle" fill="#cca550" font-family="sans-serif" font-size="13" font-weight="900" letter-spacing="0.5">
+    MARHABA HOME
+  </text>
+
+  <!-- Gold Underline -->
+  <polyline points="50,118 50,122 150,122 150,118" stroke="#cca550" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" />
+</svg>

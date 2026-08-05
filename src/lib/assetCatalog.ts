@@ -83,7 +83,11 @@ export const ASSET_CATEGORIES = [
           // Excluded "Side Table" as requested
           { id: 'glb:TABLE/1 (20)', label: 'Glass Coffee Table', type: 'glb:TABLE/1 (20)', icon: Box },
           { id: 'glb:TABLE/1 (29)', label: 'Console Table', type: 'glb:TABLE/1 (29)', icon: Box },
-
+          { id: 'glb:TABLE/1 (24)', label: 'Table 24', type: 'glb:TABLE/1 (24)', icon: Box },
+          { id: 'glb:TABLE/1 (36)', label: 'Table 36', type: 'glb:TABLE/1 (36)', icon: Box },
+          { id: 'glb:TABLE/1 (47)', label: 'Table 47', type: 'glb:TABLE/1 (47)', icon: Box },
+          { id: 'glb:TABLE/1 (59)', label: 'Table 59', type: 'glb:TABLE/1 (59)', icon: Box },
+          { id: 'glb:TABLE/1 (61)', label: 'Table 61', type: 'glb:TABLE/1 (61)', icon: Box },
         ]
       }
     ]
@@ -156,7 +160,7 @@ export const ASSET_CATEGORIES = [
         id: 'bidet',
         label: 'Bidet Spray',
         assets: [
-          { id: 'glb:VANITY/1 (28)', label: 'Bidet System', type: 'glb:VANITY/1 (28)', icon: Box },
+          { id: 'glb:ROOM/1 (28)', label: 'Bidet System', type: 'glb:ROOM/1 (28)', icon: Box },
           { id: 'bidet-sprayer', label: 'Bidet Sprayer', type: 'BidetSprayer', icon: Box },
         ]
       },
@@ -164,7 +168,7 @@ export const ASSET_CATEGORIES = [
         id: 'vanities',
         label: 'Vanities',
         assets: [
-          // EXCLUDED "Modern_vanity_Design" as requested
+          { id: 'glb:VANITY/Modern_vanity_Design', label: 'Modern Vanity Design', type: 'glb:VANITY/Modern_vanity_Design', icon: Box },
           { id: 'glb:VANITY/1 (35)', label: 'Classic Vanity', type: 'glb:VANITY/1 (35)', icon: Box },
           { id: 'glb:VANITY/1 (37)', label: 'Floating Vanity', type: 'glb:VANITY/1 (37)', icon: Box },
           { id: 'glb:VANITY/1 (70)', label: 'Double Sink Vanity', type: 'glb:VANITY/1 (70)', icon: Box },
@@ -183,6 +187,27 @@ export const ASSET_CATEGORIES = [
           { id: 'bathtub', label: 'Basic Bathtub', type: 'Bathtub', icon: Box },
           { id: 'detailed-bathtub', label: 'Detailed Bathtub', type: 'DetailedBathtub', icon: Box },
 
+        ]
+      }
+    ]
+  },
+  {
+    id: 'miscellaneous',
+    label: 'Miscellaneous',
+    icon: Box,
+    color: 'text-gray-400',
+    bg: 'bg-gray-400/10',
+    border: 'border-gray-400/20',
+    subcategories: [
+      {
+        id: 'misc-items',
+        label: 'Other Items',
+        assets: [
+          { id: 'glb:1 (34)', label: 'Misc Object 34', type: 'glb:1 (34)', icon: Box },
+          { id: 'glb:1 (39)', label: 'Misc Object 39', type: 'glb:1 (39)', icon: Box },
+          { id: 'glb:1 (40)', label: 'Misc Object 40', type: 'glb:1 (40)', icon: Box },
+          { id: 'glb:1 (64)', label: 'Misc Object 64', type: 'glb:1 (64)', icon: Box },
+          { id: 'glb:1 (65)', label: 'Misc Object 65', type: 'glb:1 (65)', icon: Box },
         ]
       }
     ]

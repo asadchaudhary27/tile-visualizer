@@ -10,6 +10,7 @@ function ModelRenderer({ url, onRendered }: { url: string, onRendered: (dataUrl:
   const { scene } = useGLTF(encodedUrl);
   const gl = useThree(s => s.gl);
   const camera = useThree(s => s.camera) as THREE.PerspectiveCamera;
+  const sceneRoot = useThree(s => s.scene);
   const sceneRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
@@ -37,13 +38,13 @@ function ModelRenderer({ url, onRendered }: { url: string, onRendered: (dataUrl:
       camera.updateProjectionMatrix();
 
       // Force render
-      gl.render(useThree.getState().scene, camera);
+      gl.render(sceneRoot, camera);
       
       // Grab data URI
       const dataUrl = gl.domElement.toDataURL('image/png');
       onRendered(dataUrl);
     });
-  }, [scene, gl, camera, onRendered]);
+  }, [scene, gl, camera, sceneRoot, onRendered]);
 
   return (
     <group ref={sceneRef}>

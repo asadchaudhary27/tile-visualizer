@@ -129,7 +129,6 @@ export default function ThreeDVisualizer({ onClose }: Props) {
   const setRoomType = useDesignStore(s => s.setRoomType);
   const isRoomConfigured = useDesignStore(s => s.isRoomConfigured);
   const setIsRoomConfigured = useDesignStore(s => s.setIsRoomConfigured);
-  const loadPresetRoom = useDesignStore(s => s.loadPresetRoom);
   const toastMessage = useDesignStore(s => s.toastMessage);
   const setToast = useDesignStore(s => s.setToast);
 
@@ -389,30 +388,7 @@ export default function ThreeDVisualizer({ onClose }: Props) {
                 </div>
               </div>
 
-              {/* Saved Presets */}
-              <div className="space-y-3">
-                <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Saved Presets</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {ROOMS.map(preset => {
-                     // Determine a reasonable roomType and dimension based on the preset name/id
-                     let pType: 'bedroom' | 'kitchen' | 'bathroom' | 'empty' = 'bedroom';
-                     let pDim = { length: 6, width: 6, height: 2.8 }; // generic 6x6 room
-                     if (preset.id.includes('kitchen')) { pType = 'kitchen'; pDim = { length: 8, width: 6, height: 2.8 }; }
-                     else if (preset.id.includes('bath')) { pType = 'bathroom'; pDim = { length: 4, width: 4, height: 2.6 }; }
-                     else if (preset.id === 'modern-room') { pType = 'bedroom'; pDim = { length: 7, width: 7, height: 3.0 }; } // mapping to living room roughly
-                     
-                     return (
-                        <button 
-                           key={preset.id}
-                           onClick={() => loadPresetRoom(pType, pDim, preset.id)} 
-                           className="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border bg-[#020617]/50 border-white/5 text-white/70 hover:bg-white/5 hover:border-teal-500/50 hover:text-teal-300 transition-all duration-300"
-                        >
-                           <span className="text-[11px] font-bold tracking-wide text-center">{preset.name}</span>
-                        </button>
-                     );
-                  })}
-                </div>
-              </div>
+
 
               {/* Dimensions */}
               <div className="space-y-3">

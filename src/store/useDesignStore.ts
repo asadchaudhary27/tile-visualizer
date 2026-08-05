@@ -38,10 +38,9 @@ interface DesignState {
   removePlacedObject: (id: string) => void;
   setActiveObjectId: (id: string | null) => void;
   toggleEditMode: () => void;
-  generateAutoLayout: (roomType: string, presetId?: string) => void;
+  generateAutoLayout: (roomType: string) => void;
   clearConfig: (surfaceId: string) => void;
   applyToScope: (sourceSurfaceId: string, targetSurfaceIds: string[]) => void;
-  loadPresetRoom: (roomType: 'bathroom' | 'bedroom' | 'kitchen' | 'empty' | null, dimensions: RoomDimensions, presetId?: string) => void;
   toastMessage: string | null;
   setToast: (msg: string | null) => void;
   selectedCategoryId: string | null;
@@ -141,23 +140,21 @@ export const useDesignStore = create<DesignState>((set) => ({
       activeObjectId: newMode ? state.activeObjectId : null 
     };
   }),
-  generateAutoLayout: (roomType, presetId) => set((state) => {
+  generateAutoLayout: (roomType) => set((state) => {
     // If empty room, no objects
     if (roomType === 'empty') {
       return { placedObjects: [], activeObjectId: null };
     }
     
-    // Set default dimensions for presets if the room is currently empty
-    let newDims = state.roomDimensions;
-    if (state.roomDimensions.length === 0 || state.roomDimensions.width === 0) {
-      if (roomType === 'bedroom') newDims = { length: 10, width: 8, height: 10 };
-      else if (roomType === 'kitchen') newDims = { length: 10, width: 8, height: 10 };
-      else if (roomType === 'bathroom') newDims = { length: 6, width: 6, height: 10 };
-    }
+    // Scale room dimensions based on standard sizes for that room type
+    let newDims = { ...state.roomDimensions };
+    if (roomType === 'bathroom') newDims = { length: 3, width: 2.5, height: 2.8 };
+    if (roomType === 'kitchen') newDims = { length: 4, width: 3.5, height: 2.8 };
+    if (roomType === 'bedroom') newDims = { length: 4.5, width: 4, height: 2.8 };
 
     return {
       roomDimensions: newDims,
-      placedObjects: generateAutoLayoutData(newDims, roomType, presetId),
+      placedObjects: generateAutoLayoutData(newDims, roomType),
       activeObjectId: null
     };
   }),

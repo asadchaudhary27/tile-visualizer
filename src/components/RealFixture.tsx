@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
-import { RoundedBox, useGLTF } from '@react-three/drei';
+import { RoundedBox, useGLTF, Center, Resize } from '@react-three/drei';
+import { SkeletonUtils } from 'three-stdlib';
 import { useDesignStore } from '../store/useDesignStore';
 
 function ModernVanityGLTF({ scaleFactor }: { scaleFactor: number }) {
-  const { scene } = useGLTF('/models/Modern_vanity_Design.glb');
+  const { scene } = useGLTF('/models/VANITY/Modern_vanity_Design.glb');
   
   const clonedScene = useMemo(() => {
     const clone = scene.clone();
@@ -68,6 +69,100 @@ function ModernVanityGLTF({ scaleFactor }: { scaleFactor: number }) {
 
 interface Props {
   assetType: string;
+}
+
+
+class ModelErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("Model failed to load:", error);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <Center bottom>
+          <mesh>
+            <boxGeometry args={[0.5, 0.5, 0.5]} />
+            <meshStandardMaterial color="red" wireframe />
+          </mesh>
+        </Center>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function GenericGLBModel({ url }: { url: string }) {
+  const { scene } = useGLTF(url);
+  const roomDimensions = useDesignStore(s => s.roomDimensions);
+  
+  const clonedScene = useMemo(() => {
+    const clone = SkeletonUtils.clone(scene);
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+        const mesh = child as THREE.Mesh;
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach(m => { m.side = THREE.DoubleSide; m.needsUpdate = true; });
+          } else {
+            (mesh.material as THREE.Material).side = THREE.DoubleSide;
+            (mesh.material as THREE.Material).needsUpdate = true;
+          }
+        }
+      }
+    });
+
+    // Calculate real-world bounds and normalize
+    const box = new THREE.Box3().setFromObject(clone);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    
+    // Heuristic: Normalize units to meters based on raw size
+    let baseScale = 1.0;
+    if (maxDim > 500) {
+      baseScale = 0.001; // Probably millimeters
+    } else if (maxDim > 50) {
+      baseScale = 0.01; // Probably centimeters
+    } else if (maxDim > 10 && maxDim < 50) {
+      baseScale = 0.0254; // Probably inches
+    }
+    
+    // Scale proportionally to room limits (e.g. shouldn't exceed 40% of the room's smaller dimension)
+    const normalizedMaxDim = maxDim * baseScale;
+    // Safeguard room dimensions
+    const roomMinLimit = Math.max(0.1, Math.min(roomDimensions.width || 3, roomDimensions.length || 3));
+    const maxAllowedSize = roomMinLimit * 0.4;
+    
+    let finalScale = baseScale;
+    if (normalizedMaxDim > maxAllowedSize && normalizedMaxDim > 0.0001) {
+      // If it's still too big for the room, scale it down mathematically to fit
+      finalScale = baseScale * (maxAllowedSize / normalizedMaxDim);
+    }
+    
+    // FATAL CRASH PREVENTION: Never allow NaN or Infinity to reach scale.set()
+    if (isNaN(finalScale) || !isFinite(finalScale) || finalScale <= 0) {
+      finalScale = 1.0;
+    }
+    
+    clone.scale.set(finalScale, finalScale, finalScale);
+    
+    return clone;
+  }, [scene, roomDimensions.width, roomDimensions.length]);
+
+  return (
+    <Center bottom>
+      <primitive object={clonedScene} />
+    </Center>
+  );
 }
 
 export default function RealFixture({ assetType }: Props) {
@@ -197,7 +292,11 @@ export default function RealFixture({ assetType }: Props) {
   }
 
   if (assetType === 'ModernVanityDesign') {
-    return <ModernVanityGLTF scaleFactor={scaleFactor} />;
+    return (
+      <ModelErrorBoundary>
+        <ModernVanityGLTF scaleFactor={scaleFactor} />
+      </ModelErrorBoundary>
+    );
   }
 
   if (assetType === 'DoubleVanity') {
@@ -936,6 +1035,67 @@ export default function RealFixture({ assetType }: Props) {
         </RoundedBox>
         <mesh position={[0, 0.25, -0.15]} castShadow material={metalMaterial}><cylinderGeometry args={[0.015, 0.02, 0.3]} /></mesh>
         <mesh position={[0, 0.4, -0.05]} rotation={[Math.PI/2, 0, 0]} castShadow material={metalMaterial}><cylinderGeometry args={[0.015, 0.015, 0.2]} /></mesh>
+      </group>
+    );
+  }
+  if (assetType === 'CoffeeTable') {
+    return (
+      <group position={[0, 0.2 * scaleFactor, 0]} scale={[scaleFactor, scaleFactor, scaleFactor]}>
+        <RoundedBox args={[1.2, 0.05, 0.8]} position={[0, 0.4, 0]} radius={0.01} material={woodMaterial} castShadow receiveShadow />
+        <RoundedBox args={[0.05, 0.4, 0.05]} position={[-0.55, 0.2, -0.35]} radius={0.01} material={metalMaterial} castShadow />
+        <RoundedBox args={[0.05, 0.4, 0.05]} position={[0.55, 0.2, -0.35]} radius={0.01} material={metalMaterial} castShadow />
+        <RoundedBox args={[0.05, 0.4, 0.05]} position={[-0.55, 0.2, 0.35]} radius={0.01} material={metalMaterial} castShadow />
+        <RoundedBox args={[0.05, 0.4, 0.05]} position={[0.55, 0.2, 0.35]} radius={0.01} material={metalMaterial} castShadow />
+      </group>
+    );
+  }
+
+  if (assetType === 'Rug') {
+    return (
+      <group position={[0, 0.01 * scaleFactor, 0]} scale={[scaleFactor, scaleFactor, scaleFactor]}>
+        <RoundedBox args={[2.5, 0.02, 1.8]} radius={0.01} receiveShadow>
+          <meshStandardMaterial color="#d1d5db" roughness={0.9} />
+        </RoundedBox>
+      </group>
+    );
+  }
+
+  if (assetType === 'TVStand') {
+    return (
+      <group position={[0, 0.25 * scaleFactor, 0]} scale={[scaleFactor, scaleFactor, scaleFactor]}>
+        <RoundedBox args={[1.8, 0.5, 0.4]} radius={0.02} material={woodMaterial} castShadow receiveShadow />
+        <RoundedBox args={[1.7, 0.05, 0.38]} position={[0, 0.1, 0]} radius={0.01} material={woodMaterial} castShadow receiveShadow />
+      </group>
+    );
+  }
+
+  if (assetType === 'Armchair') {
+    return (
+      <group position={[0, 0.4 * scaleFactor, 0]} scale={[scaleFactor, scaleFactor, scaleFactor]}>
+        <RoundedBox args={[0.8, 0.2, 0.7]} position={[0, 0, 0]} radius={0.05} castShadow receiveShadow>
+          <meshStandardMaterial color="#475569" roughness={0.8} />
+        </RoundedBox>
+        <RoundedBox args={[0.8, 0.6, 0.15]} position={[0, 0.4, -0.275]} radius={0.05} castShadow receiveShadow>
+          <meshStandardMaterial color="#475569" roughness={0.8} />
+        </RoundedBox>
+        <RoundedBox args={[0.15, 0.3, 0.6]} position={[-0.35, 0.15, 0]} radius={0.05} castShadow receiveShadow>
+          <meshStandardMaterial color="#475569" roughness={0.8} />
+        </RoundedBox>
+        <RoundedBox args={[0.15, 0.3, 0.6]} position={[0.35, 0.15, 0]} radius={0.05} castShadow receiveShadow>
+          <meshStandardMaterial color="#475569" roughness={0.8} />
+        </RoundedBox>
+      </group>
+    );
+  }
+
+  if (assetType.startsWith('glb:')) {
+    const filename = assetType.replace('glb:', '');
+    const encodedUrl = encodeURI(`/models/${filename}.glb`);
+    return (
+      <group position={[0, 0, 0]} scale={[scaleFactor, scaleFactor, scaleFactor]}>
+        <ModelErrorBoundary>
+          <GenericGLBModel url={encodedUrl} />
+        </ModelErrorBoundary>
       </group>
     );
   }

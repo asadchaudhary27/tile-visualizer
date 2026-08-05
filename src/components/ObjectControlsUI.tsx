@@ -33,9 +33,9 @@ export default function ObjectControlsUI() {
       const snapped = calculateWallSnap(finalPos, roomDimensions);
       finalPos = snapped.position;
       finalRot = snapped.rotation;
-      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size);
+      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, activeObject.rotation);
     } else {
-      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size);
+      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, activeObject.rotation);
     }
 
     updateObjectTransform(activeObjectId, finalPos, finalRot);
@@ -43,7 +43,18 @@ export default function ObjectControlsUI() {
 
   const handleRotate = (dy: number) => {
     const [rx, ry, rz] = activeObject.rotation;
-    updateObjectTransform(activeObjectId, activeObject.position, [rx, ry + dy, rz]);
+    const newRot: [number, number, number] = [rx, ry + dy, rz];
+    let finalPos = activeObject.position;
+    
+    if (activeObject.assetType === 'Door' || activeObject.assetType === 'Mirror') {
+      const snapped = calculateWallSnap(finalPos, roomDimensions);
+      finalPos = snapped.position;
+      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, newRot);
+    } else {
+      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, newRot);
+    }
+    
+    updateObjectTransform(activeObjectId, finalPos, newRot);
   };
 
   const handleMoveY = (dy: number) => {
@@ -53,7 +64,20 @@ export default function ObjectControlsUI() {
 
   const handleScale = (ds: number) => {
     const currentScale = activeObject.scale || 1;
-    updateObjectScale(activeObjectId, Math.max(0.1, currentScale + ds));
+    const newScale = Math.max(0.1, currentScale + ds);
+    const scaleRatio = newScale / currentScale;
+    
+    // Estimate new size
+    const newSize: [number, number, number] = activeObject.size ? [
+      activeObject.size[0] * scaleRatio,
+      activeObject.size[1] * scaleRatio,
+      activeObject.size[2] * scaleRatio
+    ] : [0, 0, 0];
+
+    const finalPos = clampPositionToRoom(activeObject.position, roomDimensions, newSize, activeObject.rotation);
+    
+    updateObjectScale(activeObjectId, newScale);
+    updateObjectTransform(activeObjectId, finalPos, activeObject.rotation);
   };
 
   return (

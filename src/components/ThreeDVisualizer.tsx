@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, Suspense } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { OrbitControls, Environment, Lightformer } from '@react-three/drei';
+import { OrbitControls, Environment, Lightformer, Html, useProgress } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Room3D from './Room3D';
 import Lighting3D from './Lighting3D';
@@ -10,7 +10,12 @@ import AssetLibraryPanel from './AssetLibraryPanel';
 import ObjectControlsUI from './ObjectControlsUI';
 import RoomSetupModal from './RoomSetupModal';
 import type { Room } from '../lib/types';
-import { X, Bed, Bath, ChefHat, RotateCw, Box, Layers, Camera, ChevronUp, ChevronDown, ZoomIn, ZoomOut, Lightbulb, LightbulbOff } from 'lucide-react';
+import KitchenModernMinimalist from './environments/KitchenModernMinimalist';
+import KitchenIndustrial from './environments/KitchenIndustrial';
+import KitchenTraditional from './environments/KitchenTraditional';
+import KitchenContemporary from './environments/KitchenContemporary';
+import BathroomStandard from './environments/BathroomStandard';
+import { X, Bed, Bath, ChefHat, RotateCw, Box, Layers, Camera, ChevronUp, ChevronDown, ZoomIn, ZoomOut, Lightbulb, LightbulbOff, Ruler, LayoutTemplate } from 'lucide-react';
 import { useDesignStore } from '../store/useDesignStore';
 import { TILES } from '../data/tiles';
 import { TILE_SIZES } from '../data/tileSizes';
@@ -35,6 +40,20 @@ const room3D: Room = {
   ]
 };
 
+
+function ModelLoader() {
+  const { progress } = useProgress();
+  return (
+    <Html center zIndexRange={[100, 0]}>
+      <div className="flex flex-col items-center justify-center p-6 bg-[#0F172A]/90 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl min-w-[200px]">
+        <div className="w-10 h-10 border-4 border-teal-500/30 border-t-teal-500 rounded-full animate-spin mb-4" />
+        <div className="text-white font-bold tracking-wider text-sm mb-1">LOADING ASSETS</div>
+        <div className="text-teal-400 font-mono text-lg font-bold">{progress.toFixed(0)}%</div>
+      </div>
+    </Html>
+  );
+}
+
 function CameraController({ mode, controlsRef }: { mode: 'dollhouse' | 'free', controlsRef: React.RefObject<OrbitControlsImpl> }) {
   const { camera } = useThree();
   const roomDimensions = useDesignStore(s => s.roomDimensions);
@@ -42,8 +61,9 @@ function CameraController({ mode, controlsRef }: { mode: 'dollhouse' | 'free', c
   useEffect(() => {
     if (!controlsRef.current) return;
     
-    const maxDim = Math.max(roomDimensions.width, roomDimensions.length, 5); // Minimum 5
+    const maxDim = Math.max(roomDimensions.width, roomDimensions.length);
     const midHeight = roomDimensions.height / 2; // Middle of floor and roof
+    const viewDistance = Math.max(roomDimensions.width, roomDimensions.length) * 1.2;
     
     if (mode === 'free') {
       // Move camera to center of room, eye level
@@ -53,8 +73,8 @@ function CameraController({ mode, controlsRef }: { mode: 'dollhouse' | 'free', c
     } else {
       // Dollhouse - adjust height and distance based on room size
       // Set camera angle far away but pointed exactly at the middle of the room
-      camera.position.set(0, maxDim * 0.9, maxDim * 1.6);
-      controlsRef.current.target.set(0, midHeight, 0);
+      camera.position.set(0, midHeight, viewDistance);
+      controlsRef.current.target.set(0, midHeight, -roomDimensions.length / 2);
       controlsRef.current.maxDistance = maxDim * 4;
     }
     controlsRef.current.update();
@@ -69,6 +89,7 @@ export default function ThreeDVisualizer({ onClose }: Props) {
   const [autoRotate, setAutoRotate] = useState(false);
   const [cameraMode, setCameraMode] = useState<'dollhouse' | 'free'>('dollhouse');
   const [lightsOn, setLightsOn] = useState(true);
+  const [activePreset, setActivePreset] = useState<string | null>(null);
   const controlsRef = useRef<OrbitControlsImpl>(null);
   
   const handleCameraPan = (dy: number) => {
@@ -113,6 +134,7 @@ export default function ThreeDVisualizer({ onClose }: Props) {
   const roomType = useDesignStore(s => s.roomType);
   const setRoomType = useDesignStore(s => s.setRoomType);
   const isRoomConfigured = useDesignStore(s => s.isRoomConfigured);
+  const setIsRoomConfigured = useDesignStore(s => s.setIsRoomConfigured);
   const loadPresetRoom = useDesignStore(s => s.loadPresetRoom);
   const toastMessage = useDesignStore(s => s.toastMessage);
   const setToast = useDesignStore(s => s.setToast);
@@ -157,6 +179,31 @@ export default function ThreeDVisualizer({ onClose }: Props) {
           
           <button onClick={onClose} className="w-12 h-12 bg-red-500/80 backdrop-blur-xl hover:bg-red-500 border border-red-400/50 text-white rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105">
             <X size={24} />
+          </button>
+
+          {/* Environments Menu */}
+          <div className="relative group">
+            <button className="w-12 h-12 bg-[#0F172A]/80 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105" title="Preset Environments">
+              <LayoutTemplate size={20} className="text-white/70 group-hover:text-teal-400 transition-colors" />
+            </button>
+            <div className="absolute left-14 top-0 hidden group-hover:flex flex-col bg-[#0F172A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-2 gap-1 w-48 shadow-2xl">
+              <div className="text-[10px] text-white/50 uppercase font-bold px-2 py-1 tracking-wider">Environments</div>
+              <button onClick={() => setActivePreset(null)} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${!activePreset ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Custom Room</button>
+              <button onClick={() => setActivePreset('kitchen-modern-minimalist')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'kitchen-modern-minimalist' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Modern Kitchen</button>
+              <button onClick={() => setActivePreset('kitchen-industrial')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'kitchen-industrial' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Industrial Kitchen</button>
+              <button onClick={() => setActivePreset('kitchen-traditional')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'kitchen-traditional' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Traditional Kitchen</button>
+              <button onClick={() => setActivePreset('kitchen-contemporary')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'kitchen-contemporary' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Contemporary Kitchen</button>
+              <button onClick={() => setActivePreset('bathroom-standard')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'bathroom-standard' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Standard Bathroom</button>
+            </div>
+          </div>
+
+          {/* Edit Room Size */}
+          <button 
+            onClick={() => setIsRoomConfigured(false)} 
+            className="w-12 h-12 bg-[#0F172A]/80 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105"
+            title="Edit Room Size"
+          >
+            <Ruler size={20} className="text-white/70 hover:text-teal-400 transition-colors" />
           </button>
 
           {/* Camera Toggle Button */}
@@ -218,11 +265,12 @@ export default function ThreeDVisualizer({ onClose }: Props) {
 
         {/* 3D Canvas */}
         <ErrorBoundary fallbackMessage="The 3D engine crashed. This could be due to a corrupted 3D model asset or exhausted GPU memory.">
-          <Canvas shadows camera={{ position: [-8, 8, 15], fov: 75 }}>
+          <Canvas shadows camera={{ position: [-8, 8, 15], fov: 50, near: 0.1, far: 1000 }}>
           <CameraController mode={cameraMode} controlsRef={controlsRef} />
           <color attach="background" args={['#0e0e0e']} />
           
-          {/* Base ambient lighting */}
+                    {/* Base ambient lighting */}
+          <Environment preset="city" />
           <ambientLight intensity={lightsOn ? 0.7 : 0.1} />
           {/* Realistic hemisphere light to spread evenly from ceiling to floor */}
           {lightsOn && <hemisphereLight args={['#ffffff', '#777777', 0.8]} />}
@@ -279,15 +327,32 @@ export default function ThreeDVisualizer({ onClose }: Props) {
           
           <group position={[0, 0, 0]}>
             {roomDimensions.length > 0 && roomDimensions.width > 0 && (
-              <Room3D 
-                roomType={roomType} 
-                designStyle={designStyle}
-                selectedSurface={selectedSurfaceId} 
-                onSelectSurface={(id) => {
-                  setSelectedSurfaceId(id);
-                  setCurrentStep(2);
-                }}
-              />
+              <Suspense fallback={<ModelLoader />}>
+                {activePreset === 'kitchen-modern-minimalist' && (
+                  <KitchenModernMinimalist activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
+                )}
+                {activePreset === 'kitchen-industrial' && (
+                  <KitchenIndustrial activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
+                )}
+                {activePreset === 'kitchen-traditional' && (
+                  <KitchenTraditional activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
+                )}
+                {activePreset === 'kitchen-contemporary' && (
+                  <KitchenContemporary activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
+                )}
+                {activePreset === 'bathroom-standard' && (
+                  <BathroomStandard activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
+                )}
+                
+                {!activePreset && (
+                  <Room3D 
+                    roomType={roomType} 
+                    designStyle={designStyle} 
+                    selectedSurface={selectedSurfaceId}
+                    onSelectSurface={setSelectedSurfaceId}
+                  />
+                )}
+              </Suspense>
             )}
           </group>
 

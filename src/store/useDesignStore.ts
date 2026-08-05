@@ -44,6 +44,15 @@ interface DesignState {
   loadPresetRoom: (roomType: 'bathroom' | 'bedroom' | 'kitchen' | 'empty' | null, dimensions: RoomDimensions, presetId?: string) => void;
   toastMessage: string | null;
   setToast: (msg: string | null) => void;
+  selectedCategoryId: string | null;
+  setSelectedCategoryId: (id: string | null) => void;
+  
+  // Thumbnail Generation State
+  thumbnailQueue: string[];
+  thumbnails: Record<string, string>;
+  queueThumbnail: (url: string) => void;
+  addThumbnail: (url: string, dataUrl: string) => void;
+  popThumbnailQueue: () => void;
 }
 
 export const useDesignStore = create<DesignState>((set) => ({
@@ -186,5 +195,22 @@ export const useDesignStore = create<DesignState>((set) => ({
     };
   }),
   toastMessage: null,
-  setToast: (msg) => set({ toastMessage: msg })
+  setToast: (msg) => set({ toastMessage: msg }),
+  selectedCategoryId: null,
+  setSelectedCategoryId: (id) => set({ selectedCategoryId: id }),
+  
+  thumbnailQueue: [],
+  thumbnails: {},
+  queueThumbnail: (url) => set((state) => {
+    if (!state.thumbnails[url] && !state.thumbnailQueue.includes(url)) {
+      return { thumbnailQueue: [...state.thumbnailQueue, url] };
+    }
+    return state;
+  }),
+  addThumbnail: (url, dataUrl) => set((state) => ({
+    thumbnails: { ...state.thumbnails, [url]: dataUrl }
+  })),
+  popThumbnailQueue: () => set((state) => ({
+    thumbnailQueue: state.thumbnailQueue.slice(1)
+  })),
 }));

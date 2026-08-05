@@ -4,6 +4,7 @@ import RoomEditorScreen from './components/RoomEditorScreen';
 import ThreeDVisualizer from './components/ThreeDVisualizer';
 import TileCalculatorScreen from './components/TileCalculatorScreen';
 import ConsultationScreen from './components/ConsultationScreen';
+import ThumbnailGenerator from './components/ThumbnailGenerator';
 import { Logo } from './components/Logo';
 import type { Room } from './lib/types';
 import { ChevronLeft } from 'lucide-react';
@@ -94,6 +95,7 @@ function App() {
           />
         )}
       </main>
+      <ThumbnailGenerator />
     </div>
   );
 }

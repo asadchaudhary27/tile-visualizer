@@ -1,191 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDesignStore } from '../store/useDesignStore';
-import { Box, Bed, Bath, ChefHat, Trash2, DoorOpen, Monitor, Sofa, Armchair, Toilet, Droplets, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, RotateCcw, RotateCw } from 'lucide-react';
+import { Box, Trash2, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, RotateCcw, RotateCw } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { ASSET_CATEGORIES } from '../lib/assetCatalog';
+import { findEmptySpawnPosition } from '../utils/autoLayout';
 
-const ASSET_CATEGORIES = [
-  {
-    id: 'bedroom',
-    label: 'Bedroom',
-    icon: Bed,
-    color: 'text-blue-400',
-    bg: 'bg-blue-400/10',
-    border: 'border-blue-400/20',
-    subcategories: [
-      {
-        id: 'beds', label: 'Beds', assets: [
-          { id: 'bed-queen', label: 'Queen Bed', type: 'BedQueen', icon: Bed },
-          { id: 'bed-king', label: 'King Bed', type: 'KingBed', icon: Bed },
-          { id: 'bed-single', label: 'Single Bed', type: 'SingleBed', icon: Bed },
-          { id: 'bed-bunk', label: 'Bunk Bed', type: 'BunkBed', icon: Bed },
-          { id: 'detailed-bed', label: 'Detailed Bed', type: 'DetailedBed', icon: Bed },
-        ]
-      },
-      {
-        id: 'bedroom-storage', label: 'Storage & Tables', assets: [
-          { id: 'wardrobe', label: 'Wardrobe', type: 'Wardrobe', icon: Box },
-          { id: 'nightstand', label: 'Nightstand', type: 'Nightstand', icon: Box },
-          { id: 'dressing-table', label: 'Dressing Table', type: 'DressingTable', icon: Box },
-          { id: 'modern-bench', label: 'Modern Bench', type: 'ModernBench', icon: Box },
-          { id: 'dressing-stool', label: 'Stool', type: 'DressingStool', icon: Box },
-        ]
-      },
-      {
-        id: 'bedroom-decor', label: 'Decor & Lighting', assets: [
-          { id: 'rug', label: 'Area Rug', type: 'Rug', icon: Box },
-          { id: 'bedside-lamp', label: 'Bedside Lamp', type: 'BedsideLamp', icon: Box },
-          { id: 'wall-switch', label: 'Wall Switch', type: 'WallSwitch', icon: Box },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'living',
-    label: 'Living Room',
-    icon: Sofa,
-    color: 'text-purple-400',
-    bg: 'bg-purple-400/10',
-    border: 'border-purple-400/20',
-    subcategories: [
-      {
-        id: 'seating', label: 'Seating', assets: [
-          { id: 'luxury-sofa', label: 'Luxury Sofa', type: 'LuxurySofa', icon: Sofa },
-          { id: 'sofa', label: 'Basic Sofa', type: 'Sofa', icon: Sofa },
-          { id: 'armchair', label: 'Armchair', type: 'Armchair', icon: Armchair },
-        ]
-      },
-      {
-        id: 'living-tables', label: 'Tables & Storage', assets: [
-          { id: 'coffee-table', label: 'Coffee Table', type: 'CoffeeTable', icon: Box },
-          { id: 'tv-wall', label: 'TV Wall Setup', type: 'TVWall', icon: Monitor },
-          { id: 'tv-stand', label: 'TV Stand', type: 'TVStand', icon: Monitor },
-          { id: 'side-table', label: 'Side Table', type: 'SideTable', icon: Box },
-        ]
-      },
-      {
-        id: 'living-decor', label: 'Decor & Plants', assets: [
-          { id: 'area-rug', label: 'Area Rug', type: 'AreaRug', icon: Box },
-          { id: 'floor-lamp', label: 'Arc Floor Lamp', type: 'FloorLamp', icon: Box },
-          { id: 'fiddle-leaf', label: 'Fiddle Leaf Fig', type: 'FiddleLeafFig', icon: Box },
-          { id: 'ceiling-light', label: 'Ceiling Light', type: 'CeilingLight', icon: Box },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'kitchen',
-    label: 'Kitchen & Dining',
-    icon: ChefHat,
-    color: 'text-red-400',
-    bg: 'bg-red-400/10',
-    border: 'border-red-400/20',
-    subcategories: [
-      {
-        id: 'appliances', label: 'Appliances', assets: [
-          { id: 'fridge', label: 'Refrigerator', type: 'Fridge', icon: Box },
-          { id: 'stove', label: 'Stove / Oven', type: 'Stove', icon: Box },
-          { id: 'range-hood', label: 'Range Hood', type: 'RangeHood', icon: Box },
-          { id: 'detailed-fridge', label: 'Tall Steel Fridge', type: 'DetailedFridge', icon: Box },
-          { id: 'detailed-oven', label: 'Built-in Oven', type: 'DetailedOven', icon: Box },
-        ]
-      },
-      {
-        id: 'cabinets', label: 'Cabinets & Surfaces', assets: [
-          { id: 'kitchen-island', label: 'Kitchen Island', type: 'KitchenIsland', icon: ChefHat },
-          { id: 'kitchen-cabinets', label: 'Cabinets & Counters', type: 'KitchenCabinets', icon: Box },
-          { id: 'detailed-island', label: 'Detailed Island', type: 'DetailedIsland', icon: ChefHat },
-          { id: 'detailed-lower', label: 'Detailed Lower Cab', type: 'DetailedLowerCab', icon: Box },
-          { id: 'detailed-upper', label: 'Detailed Upper Cab', type: 'DetailedUpperCab', icon: Box },
-          { id: 'detailed-sink', label: 'Detailed Sink', type: 'DetailedSink', icon: Box },
-        ]
-      },
-      {
-        id: 'dining', label: 'Dining', assets: [
-          { id: 'dining-table', label: 'Dining Table', type: 'DiningTable', icon: Box },
-          { id: 'dining-chair', label: 'Dining Chair', type: 'DiningChair', icon: Box },
-          { id: 'bar-stool', label: 'Bar Stool', type: 'BarStool', icon: Box },
-          { id: 'pendant-light', label: 'Pendant Light', type: 'PendantLight', icon: Box },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'room-sets',
-    label: 'Full Room Sets',
-    icon: Box,
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-400/10',
-    border: 'border-emerald-400/20',
-    subcategories: [
-      {
-        id: 'bedroom-sets', label: 'Bedroom Sets', assets: [
-          { id: 'bedroom-furniture', label: 'Bedroom Furniture', type: 'BedroomFurniture', icon: Bed },
-        ]
-      },
-      {
-        id: 'kitchen-sets', label: 'Kitchen Sets', assets: [
-          { id: 'kitchen-furniture', label: 'Kitchen Furniture', type: 'KitchenFurniture', icon: ChefHat },
-        ]
-      },
-      {
-        id: 'bathroom-sets', label: 'Bathroom Sets', assets: [
-          { id: 'bathroom-furniture', label: 'Bathroom Furniture', type: 'BathroomFurniture', icon: Bath },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'bathroom',
-    label: 'Bathroom',
-    icon: Bath,
-    color: 'text-cyan-400',
-    bg: 'bg-cyan-400/10',
-    border: 'border-cyan-400/20',
-    subcategories: [
-      {
-        id: 'fixtures', label: 'Fixtures', assets: [
-          { id: 'toilet', label: 'Toilet', type: 'Toilet', icon: Toilet },
-          { id: 'detailed-toilet', label: 'Egg Toilet', type: 'DetailedToilet', icon: Toilet },
-          { id: 'bathtub', label: 'Freestanding Bathtub', type: 'Bathtub', icon: Bath },
-          { id: 'detailed-bathtub', label: 'Bowl Bathtub', type: 'DetailedBathtub', icon: Bath },
-          { id: 'shower', label: 'Glass Shower', type: 'Shower', icon: Droplets },
-          { id: 'bidet', label: 'Bidet Sprayer', type: 'BidetSprayer', icon: Droplets },
-        ]
-      },
-      {
-        id: 'vanities', label: 'Vanities', assets: [
-          { id: 'double-vanity', label: 'Double Vanity', type: 'DoubleVanity', icon: Bath },
-          { id: 'detailed-vanity', label: 'Floating Vanity', type: 'DetailedVanity', icon: Bath },
-          { id: 'vanity', label: 'Single Vanity', type: 'Vanity', icon: Bath },
-          { id: 'modern-vanity-design', label: 'Modern vanity Design', type: 'ModernVanityDesign', icon: Bath },
-        ]
-      },
-      {
-        id: 'accessories', label: 'Accessories', assets: [
-          { id: 'towel-rail', label: 'Towel Rail', type: 'TowelRail', icon: Box },
-          { id: 'detailed-towel', label: 'Sleek Towel Rack', type: 'DetailedTowelRack', icon: Box },
-          { id: 'floor-plant', label: 'Floor Plant', type: 'FloorPlant', icon: Box },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'structural',
-    label: 'Structural',
-    icon: DoorOpen,
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-400/10',
-    border: 'border-emerald-400/20',
-    subcategories: [
-      {
-        id: 'doors-mirrors', label: 'Doors & Mirrors', assets: [
-          { id: 'door', label: 'Interior Door', type: 'Door', icon: DoorOpen },
-          { id: 'mirror', label: 'Wall Mirror', type: 'Mirror', icon: Box }
-        ]
-      }
-    ]
+function AssetThumbnail({ asset, category }: { asset: any, category: any }) {
+  const thumbnails = useDesignStore(s => s.thumbnails);
+  const queueThumbnail = useDesignStore(s => s.queueThumbnail);
+  const dataUrl = thumbnails[asset.type];
+
+  React.useEffect(() => {
+    if (!dataUrl) {
+      queueThumbnail(asset.type);
+    }
+  }, [dataUrl, asset.type, queueThumbnail]);
+
+  if (dataUrl) {
+    return (
+      <img 
+        src={dataUrl} 
+        alt={asset.label} 
+        className="w-16 h-16 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] opacity-70 group-hover:opacity-100 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-500 relative z-10" 
+      />
+    );
   }
-];
+
+  return <asset.icon size={32} className={`relative z-10 text-white/40 group-hover:${category.color} transition-colors duration-300 group-hover:scale-110`} strokeWidth={1.5} />;
+}
 
 interface Props {
   roomType: string;
@@ -201,8 +43,8 @@ export default function AssetLibraryPanel({ roomType }: Props) {
   const updateObjectTransform = useDesignStore(s => s.updateObjectTransform);
   const roomDimensions = useDesignStore(s => s.roomDimensions);
   const setActiveObjectId = useDesignStore(s => s.setActiveObjectId);
-
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const selectedCategoryId = useDesignStore(s => s.selectedCategoryId);
+  const setSelectedCategoryId = useDesignStore(s => s.setSelectedCategoryId);
 
   const handleMove = (obj: any, axis: 'x'|'y'|'z', delta: number) => {
     const newPos = [...obj.position] as [number, number, number];
@@ -222,13 +64,16 @@ export default function AssetLibraryPanel({ roomType }: Props) {
     if (activeObjectId) {
       updateObjectAssetType(activeObjectId, assetType);
     } else {
-      // Spawn exactly in the center of the room so it's always visible
+      const spawnPos = findEmptySpawnPosition(placedObjects, roomDimensions);
+      const newId = uuidv4();
       addPlacedObject({
-        id: uuidv4(),
+        id: newId,
         assetType,
-        position: [0, 0, 0],
+        position: spawnPos,
         rotation: [0, 0, 0]
       });
+      // Automatically select the newly added object so the control UI appears immediately
+      setActiveObjectId(newId);
     }
   };
 
@@ -292,7 +137,7 @@ export default function AssetLibraryPanel({ roomType }: Props) {
                     className="group relative flex flex-col items-center justify-center gap-4 p-5 bg-[#020617]/50 hover:bg-white/5 border border-white/5 hover:border-white/20 rounded-2xl transition-all duration-300 overflow-hidden hover:shadow-[0_8px_30px_rgba(255,255,255,0.08)] hover:-translate-y-1"
                   >
                     <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${category.bg} blur-2xl`} />
-                    <asset.icon size={32} className={`relative z-10 text-white/40 group-hover:${category.color} transition-colors duration-300 group-hover:scale-110`} strokeWidth={1.5} />
+                    <AssetThumbnail asset={asset} category={category} />
                     <span className="relative z-10 text-white/80 text-[11px] font-bold text-center leading-tight tracking-wide group-hover:text-white transition-colors">
                       {asset.label}
                     </span>

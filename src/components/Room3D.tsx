@@ -2209,9 +2209,16 @@ export default function Room3D({ roomType, designStyle, selectedSurface, onSelec
           {obj.assetType === 'Door' && <Door3D />}
           {obj.assetType === 'Mirror' && <Mirror3D />}
           
-          {/* Individual Granular Assets */}
-          {['ModernVanityDesign', 'ModernBench', 'PendantLight', 'DetailedLowerCab', 'BedsideLamp', 'Nightstand', 'FloorPlant', 'DetailedTowelRack', 'LuxurySofa', 'DetailedVanity', 'DiningTable', 'Shower', 'DetailedSink', 'Stove', 'BidetSprayer', 'DetailedOven', 'Sofa', 'TVStand', 'KitchenIsland', 'FloorLamp', 'DressingTable', 'Toilet', 'DressingStool', 'KingBed', 'WallSwitch', 'Rug', 'Fridge', 'CoffeeTable', 'DetailedUpperCab', 'FiddleLeafFig', 'CeilingLight', 'RangeHood', 'TowelRail', 'DetailedToilet', 'TVWall', 'AreaRug', 'SingleBed', 'Armchair', 'KitchenCabinets', 'Vanity', 'SideTable', 'BunkBed', 'DetailedIsland', 'DoubleVanity', 'BedQueen', 'DetailedBathtub', 'DetailedFridge', 'DiningChair', 'BarStool', 'Wardrobe', 'DetailedBed', 'Bathtub'].includes(obj.assetType) && (
-            <RealFixture assetType={obj.assetType} />
+          {/* Individual Granular Assets and Uploaded GLB Models */}
+          {(obj.assetType.startsWith('glb:') || ['ModernVanityDesign', 'ModernBench', 'PendantLight', 'DetailedLowerCab', 'BedsideLamp', 'Nightstand', 'FloorPlant', 'DetailedTowelRack', 'LuxurySofa', 'DetailedVanity', 'DiningTable', 'Shower', 'DetailedSink', 'Stove', 'BidetSprayer', 'DetailedOven', 'Sofa', 'TVStand', 'KitchenIsland', 'FloorLamp', 'DressingTable', 'Toilet', 'DressingStool', 'KingBed', 'WallSwitch', 'Rug', 'Fridge', 'CoffeeTable', 'DetailedUpperCab', 'FiddleLeafFig', 'CeilingLight', 'RangeHood', 'TowelRail', 'DetailedToilet', 'TVWall', 'AreaRug', 'SingleBed', 'Armchair', 'KitchenCabinets', 'Vanity', 'SideTable', 'BunkBed', 'DetailedIsland', 'DoubleVanity', 'BedQueen', 'DetailedBathtub', 'DetailedFridge', 'DiningChair', 'BarStool', 'Wardrobe', 'DetailedBed', 'Bathtub'].includes(obj.assetType)) && (
+            <Suspense fallback={
+              <mesh>
+                <boxGeometry args={[0.5, 0.5, 0.5]} />
+                <meshStandardMaterial color="#14b8a6" wireframe />
+              </mesh>
+            }>
+              <RealFixture assetType={obj.assetType} />
+            </Suspense>
           )}
         </DraggableFurniture>
       ))}

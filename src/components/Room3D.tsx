@@ -691,7 +691,7 @@ function BedroomFurniture({ designStyle }: { designStyle: 1 | 2 | 3 | 4 }) {
 // Ultra-Luxury Bathroom
 function BathroomFurniture({ designStyle }: { designStyle: 1 | 2 | 3 | 4 }) {
   // Generate a stunning Terrazzo texture for Design 4
-  const terrazzoTexture = useMemo(() => TextureCache.getTerrazzo(), []);
+
   const oakTexture = useMemo(() => TextureCache.getOak(), []);
   const stoneTexture = useMemo(() => TextureCache.getStone(), []);
 
@@ -2070,14 +2070,14 @@ function Mirror3D() {
   );
 }
 
-export default function Room3D({ roomType, designStyle, selectedSurface, onSelectSurface, customFurniture = [] }: Props) {
+export default function Room3D({ designStyle, selectedSurface, onSelectSurface, customFurniture = [] }: Props) {
   const roomDimensions = useDesignStore(s => s.roomDimensions);
   const placedObjects = useDesignStore(s => s.placedObjects);
   
   const roomWidth = roomDimensions.width;
   const roomDepth = roomDimensions.length;
   const wallHeight = roomDimensions.height;
-  const wainscotHeight = 1;
+
 
   // Generate a modern 2026 aesthetic ceiling texture (Acoustic Wood Slats + Linear LEDs)
   const modern2026CeilingTexture = useMemo(() => TextureCache.getModernCeiling(), []);

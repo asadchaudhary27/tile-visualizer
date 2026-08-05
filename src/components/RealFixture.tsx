@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
-import { RoundedBox, useGLTF, Center, Resize } from '@react-three/drei';
+import { RoundedBox, useGLTF, Center } from '@react-three/drei';
 import { SkeletonUtils } from 'three-stdlib';
 import { useDesignStore } from '../store/useDesignStore';
 
@@ -77,10 +77,10 @@ class ModelErrorBoundary extends React.Component<{children: React.ReactNode}, {h
     super(props);
     this.state = { hasError: false };
   }
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(_error: any) {
     return { hasError: true };
   }
-  componentDidCatch(error: any, errorInfo: any) {
+  componentDidCatch(_error: any, _errorInfo: any) {
     console.error("Model failed to load:", error);
   }
   render() {

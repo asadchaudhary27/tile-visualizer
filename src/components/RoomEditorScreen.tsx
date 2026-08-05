@@ -7,7 +7,7 @@ import TilePickerPanel from './TilePickerPanel';
 import LuxuryFurniture from './LuxuryFurniture';
 import BathroomFurniture from './BathroomFurniture';
 import KitchenFurniture from './KitchenFurniture';
-import { RotateCcw, Download, Calculator } from 'lucide-react';
+import { RotateCcw, Download } from 'lucide-react';
 
 interface Props { room: Room; }
 
@@ -142,7 +142,7 @@ export default function RoomEditorScreen({ room }: Props) {
                 // 1. Serialize SVG to string
                 const serializer = new XMLSerializer();
                 let source = serializer.serializeToString(svg);
-                if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+                if (!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
                     source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
                 }
                 

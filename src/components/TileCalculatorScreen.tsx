@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
-import { BedDouble, Sofa, Utensils, Bath, LayoutTemplate, Plus, Trash2, Calculator, Settings2, ArrowRight, Info } from 'lucide-react';
+import { BedDouble, Sofa, Utensils, Bath, LayoutTemplate, Plus, Trash2, Calculator, ArrowRight, Info } from 'lucide-react';
 import { useDesignStore } from '../store/useDesignStore';
-import { formatArea, getDisplayArea, feetToMeters, metersToFeet, cmToMeters, metersToCm, inchesToMeters, metersToInches } from '../lib/unitMath';
+import { formatArea, feetToMeters, metersToFeet, cmToMeters, metersToCm, inchesToMeters, metersToInches } from '../lib/unitMath';
 import type { UnitSystem } from '../lib/unitMath';
 
 interface Dimension {
@@ -240,7 +240,7 @@ export default function TileCalculatorScreen() {
   const [calcUnit, setCalcUnit] = useState<UnitSystem>(globalUnitSystem);
   const unit = calcUnit === 'meters' ? 'm' : calcUnit === 'feet' ? 'ft' : calcUnit === 'inches' ? 'in' : 'cm';
   const setRoomDimensions = useDesignStore(s => s.setRoomDimensions);
-  const [lang, setLang] = useState<'en'|'ur'>('en');
+  const [lang] = useState<'en'|'ur'>('en');
   const [showGuide, setShowGuide] = useState(false);
   const [roomType, setRoomType] = useState('Living Room');
   const [surface, setSurface] = useState<'Floor' | 'Wall' | 'Both'>('Both');
@@ -262,6 +262,7 @@ export default function TileCalculatorScreen() {
   const roomDimensions = useDesignStore(s => s.roomDimensions);
 
   // Sync from store to local state on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (roomDimensions.width > 0 && roomDimensions.length > 0) {
       const toCalcUnit = (m: number) => {
@@ -279,6 +280,7 @@ export default function TileCalculatorScreen() {
   }, []); // Only once on mount so we don't break manual edits here
 
   // Sync from local state back to store when floor or wall dimensions change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const parseDim = (val: string) => {
       const num = parseFloat(val);

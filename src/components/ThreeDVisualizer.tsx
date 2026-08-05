@@ -10,12 +10,7 @@ import AssetLibraryPanel from './AssetLibraryPanel';
 import ObjectControlsUI from './ObjectControlsUI';
 import RoomSetupModal from './RoomSetupModal';
 import type { Room } from '../lib/types';
-import KitchenModernMinimalist from './environments/KitchenModernMinimalist';
-import KitchenIndustrial from './environments/KitchenIndustrial';
-import KitchenTraditional from './environments/KitchenTraditional';
-import KitchenContemporary from './environments/KitchenContemporary';
-import BathroomStandard from './environments/BathroomStandard';
-import { X, Bed, Bath, ChefHat, RotateCw, Box, Layers, Camera, ChevronUp, ChevronDown, ZoomIn, ZoomOut, Lightbulb, LightbulbOff, Ruler, LayoutTemplate } from 'lucide-react';
+import { X, Bed, Bath, ChefHat, RotateCw, Box, Layers, Camera, ChevronUp, ChevronDown, ZoomIn, ZoomOut, Lightbulb, LightbulbOff, Ruler } from 'lucide-react';
 import { useDesignStore } from '../store/useDesignStore';
 import { TILES } from '../data/tiles';
 import { TILE_SIZES } from '../data/tileSizes';
@@ -89,7 +84,6 @@ export default function ThreeDVisualizer({ onClose }: Props) {
   const [autoRotate, setAutoRotate] = useState(false);
   const [cameraMode, setCameraMode] = useState<'dollhouse' | 'free'>('dollhouse');
   const [lightsOn, setLightsOn] = useState(true);
-  const [activePreset, setActivePreset] = useState<string | null>(null);
   const controlsRef = useRef<OrbitControlsImpl>(null);
   
   const handleCameraPan = (dy: number) => {
@@ -180,22 +174,6 @@ export default function ThreeDVisualizer({ onClose }: Props) {
           <button onClick={onClose} className="w-12 h-12 bg-red-500/80 backdrop-blur-xl hover:bg-red-500 border border-red-400/50 text-white rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105">
             <X size={24} />
           </button>
-
-          {/* Environments Menu */}
-          <div className="relative group">
-            <button className="w-12 h-12 bg-[#0F172A]/80 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105" title="Preset Environments">
-              <LayoutTemplate size={20} className="text-white/70 group-hover:text-teal-400 transition-colors" />
-            </button>
-            <div className="absolute left-14 top-0 hidden group-hover:flex flex-col bg-[#0F172A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-2 gap-1 w-48 shadow-2xl">
-              <div className="text-[10px] text-white/50 uppercase font-bold px-2 py-1 tracking-wider">Environments</div>
-              <button onClick={() => setActivePreset(null)} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${!activePreset ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Custom Room</button>
-              <button onClick={() => setActivePreset('kitchen-modern-minimalist')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'kitchen-modern-minimalist' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Modern Kitchen</button>
-              <button onClick={() => setActivePreset('kitchen-industrial')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'kitchen-industrial' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Industrial Kitchen</button>
-              <button onClick={() => setActivePreset('kitchen-traditional')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'kitchen-traditional' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Traditional Kitchen</button>
-              <button onClick={() => setActivePreset('kitchen-contemporary')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'kitchen-contemporary' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Contemporary Kitchen</button>
-              <button onClick={() => setActivePreset('bathroom-standard')} className={`text-left px-3 py-2 text-xs rounded-xl transition-all ${activePreset === 'bathroom-standard' ? 'bg-[#cca550] text-black font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}>Standard Bathroom</button>
-            </div>
-          </div>
 
           {/* Edit Room Size */}
           <button 
@@ -328,30 +306,12 @@ export default function ThreeDVisualizer({ onClose }: Props) {
           <group position={[0, 0, 0]}>
             {roomDimensions.length > 0 && roomDimensions.width > 0 && (
               <Suspense fallback={<ModelLoader />}>
-                {activePreset === 'kitchen-modern-minimalist' && (
-                  <KitchenModernMinimalist activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
-                )}
-                {activePreset === 'kitchen-industrial' && (
-                  <KitchenIndustrial activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
-                )}
-                {activePreset === 'kitchen-traditional' && (
-                  <KitchenTraditional activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
-                )}
-                {activePreset === 'kitchen-contemporary' && (
-                  <KitchenContemporary activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
-                )}
-                {activePreset === 'bathroom-standard' && (
-                  <BathroomStandard activeSurfaceId={selectedSurfaceId} onSelectSurface={setSelectedSurfaceId} />
-                )}
-                
-                {!activePreset && (
-                  <Room3D 
-                    roomType={roomType} 
-                    designStyle={designStyle} 
-                    selectedSurface={selectedSurfaceId}
-                    onSelectSurface={setSelectedSurfaceId}
-                  />
-                )}
+                <Room3D 
+                  roomType={roomType} 
+                  designStyle={designStyle} 
+                  selectedSurface={selectedSurfaceId} 
+                  onSelectSurface={setSelectedSurfaceId} 
+                />
               </Suspense>
             )}
           </group>

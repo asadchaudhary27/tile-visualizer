@@ -44,7 +44,7 @@ function getRandomItem(arr: any[]) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export function generateAutoLayoutData(dimensions: RoomDimensions, roomType: string, presetId?: string): PlacedObject[] {
+export function generateAutoLayoutData(dimensions: RoomDimensions, roomType: string): PlacedObject[] {
   const objects: PlacedObject[] = [];
   const r = Math.random;
 
@@ -59,8 +59,6 @@ export function generateAutoLayoutData(dimensions: RoomDimensions, roomType: str
   const w2 = dimensions.width / 2;
   const d2 = dimensions.length / 2;
 
-  // If a presetId is provided, fallback to standard randomizer for now 
-  // since preset environments handle their own hardcoded layouts anyway
   const type = roomType || 'empty';
   
   if (type === 'bedroom') {

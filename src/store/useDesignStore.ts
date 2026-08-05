@@ -182,18 +182,6 @@ export const useDesignStore = create<DesignState>((set) => ({
     }
     return { configs: newConfigs };
   }),
-  loadPresetRoom: (roomType, dimensions, presetId) => set((state) => {
-    // This loads a completely fresh preset room, replacing dimensions, type, and regenerating furniture
-    return {
-      roomDimensions: dimensions,
-      roomType: roomType,
-      isRoomConfigured: true,
-      placedObjects: roomType ? generateAutoLayoutData(dimensions, roomType, presetId) : [],
-      configs: {}, // clear tiles when loading a new preset
-      activeObjectId: null,
-      toastMessage: 'Preset room loaded successfully!'
-    };
-  }),
   toastMessage: null,
   setToast: (msg) => set({ toastMessage: msg }),
   selectedCategoryId: null,

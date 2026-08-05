@@ -11,7 +11,7 @@ function AssetThumbnail({ asset, category }: { asset: any, category: any }) {
   const dataUrl = thumbnails[asset.type];
 
   React.useEffect(() => {
-    if (!dataUrl) {
+    if (!dataUrl && asset.type.startsWith('glb:')) {
       queueThumbnail(asset.type);
     }
   }, [dataUrl, asset.type, queueThumbnail]);

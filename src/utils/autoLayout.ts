@@ -238,12 +238,20 @@ export function clampPositionToRoom(
   position: [number, number, number], 
   dimensions: RoomDimensions, 
   objectSize: [number, number, number] = [0, 0, 0],
-  rotation: [number, number, number] = [0, 0, 0]
+  rotation: [number, number, number] = [0, 0, 0],
+  scale: number = 1
 ): [number, number, number] {
-  // objectSize is already the world AABB (axis-aligned bounding box), 
-  // so it already incorporates scale and rotation!
-  const effWidth = objectSize[0];
-  const effDepth = objectSize[2];
+  // objectSize is the LOCAL unscaled size of the mesh perfectly centered.
+  // We apply rotation and scale mathematically to find its World AABB dimensions.
+  const angle = rotation[1];
+  const cos = Math.abs(Math.cos(angle));
+  const sin = Math.abs(Math.sin(angle));
+  
+  const scaledWidth = objectSize[0] * scale;
+  const scaledDepth = objectSize[2] * scale;
+
+  const effWidth = scaledWidth * cos + scaledDepth * sin;
+  const effDepth = scaledWidth * sin + scaledDepth * cos;
 
   const minX = -dimensions.width / 2 + effWidth / 2;
   const maxX = dimensions.width / 2 - effWidth / 2;

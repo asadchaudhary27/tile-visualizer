@@ -26,9 +26,7 @@ export default function DraggableFurniture({ id, assetType, position, rotation, 
   const roomDimensions = useDesignStore(s => s.roomDimensions);
 
   const updateObjectSize = useDesignStore(s => s.updateObjectSize);
-  const sizeRef = useRef<[number, number, number]>([0.5, 1, 0.5]);
-  const lastBoxMinY = useRef<number | null>(null);
-  const frameCount = useRef(0);
+  const hasCentered = useRef(false);
 
   const isActive = activeObjectId === id && isFurnitureEditMode;
   const showHoverEffect = isHovered && isFurnitureEditMode && !isActive;
@@ -40,37 +38,41 @@ export default function DraggableFurniture({ id, assetType, position, rotation, 
       groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.15);
     }
 
-    if (innerGroupRef.current && groupRef.current) {
-      frameCount.current++;
-      // Recalculate frequently for the first few seconds (to catch loads), then less frequently, but always when active
-      const shouldMeasure = isActive || frameCount.current < 120 || frameCount.current % 60 === 0;
-
-      if (shouldMeasure) {
-        // Temporarily reset shift to measure raw bounds
-        innerGroupRef.current.position.y = 0;
-        innerGroupRef.current.updateMatrixWorld(true);
+    if (!hasCentered.current && groupRef.current && innerGroupRef.current) {
+      // Temporarily reset group to identity to measure raw local bounds
+      const oldPos = groupRef.current.position.clone();
+      const oldRot = groupRef.current.rotation.clone();
+      const oldScale = groupRef.current.scale.clone();
+      
+      groupRef.current.position.set(0,0,0);
+      groupRef.current.rotation.set(0,0,0);
+      groupRef.current.scale.set(1,1,1);
+      groupRef.current.updateMatrixWorld(true);
+      
+      innerGroupRef.current.position.set(0,0,0);
+      innerGroupRef.current.updateMatrixWorld(true);
+      
+      const box = new THREE.Box3().setFromObject(innerGroupRef.current);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      
+      if (size.x > 0 && size.y > 0 && size.z > 0) {
+        const center = new THREE.Vector3();
+        box.getCenter(center);
         
-        const box = new THREE.Box3().setFromObject(innerGroupRef.current);
+        // Offset inner geometry so its center is exactly (0,0,0) locally, and rests on Y=0
+        innerGroupRef.current.position.set(-center.x, -box.min.y, -center.z);
         
-        // If raw bounds changed (model loaded or scaled)
-        if (lastBoxMinY.current === null || Math.abs(box.min.y - lastBoxMinY.current) > 0.005) {
-          lastBoxMinY.current = box.min.y;
-          
-          const size = new THREE.Vector3();
-          box.getSize(size);
-          if (size.x > 0 && size.y > 0 && size.z > 0) {
-            sizeRef.current = [size.x, size.y, size.z];
-            updateObjectSize(id, sizeRef.current);
-          }
-        }
+        // Report the RAW LOCAL size to the store (unscaled, unrotated)
+        updateObjectSize(id, [size.x, size.y, size.z]);
+        hasCentered.current = true;
       }
-
-      // Always enforce the shift based on the latest known bounds
-      if (lastBoxMinY.current !== null) {
-        const worldScale = groupRef.current.scale.y;
-        const shiftY = (position[1] - lastBoxMinY.current) / worldScale;
-        innerGroupRef.current.position.y = shiftY;
-      }
+      
+      // Restore previous transforms
+      groupRef.current.position.copy(oldPos);
+      groupRef.current.rotation.copy(oldRot);
+      groupRef.current.scale.copy(oldScale);
+      groupRef.current.updateMatrixWorld(true);
     }
   });
 

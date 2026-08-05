@@ -33,9 +33,9 @@ export default function ObjectControlsUI() {
       const snapped = calculateWallSnap(finalPos, roomDimensions);
       finalPos = snapped.position;
       finalRot = snapped.rotation;
-      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, activeObject.rotation);
+      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, activeObject.rotation, activeObject.scale);
     } else {
-      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, activeObject.rotation);
+      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, activeObject.rotation, activeObject.scale);
     }
 
     updateObjectTransform(activeObjectId, finalPos, finalRot);
@@ -49,9 +49,9 @@ export default function ObjectControlsUI() {
     if (activeObject.assetType === 'Door' || activeObject.assetType === 'Mirror') {
       const snapped = calculateWallSnap(finalPos, roomDimensions);
       finalPos = snapped.position;
-      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, newRot);
+      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, newRot, activeObject.scale);
     } else {
-      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, newRot);
+      finalPos = clampPositionToRoom(finalPos, roomDimensions, activeObject.size, newRot, activeObject.scale);
     }
     
     updateObjectTransform(activeObjectId, finalPos, newRot);
@@ -65,16 +65,8 @@ export default function ObjectControlsUI() {
   const handleScale = (ds: number) => {
     const currentScale = activeObject.scale || 1;
     const newScale = Math.max(0.1, currentScale + ds);
-    const scaleRatio = newScale / currentScale;
     
-    // Estimate new size
-    const newSize: [number, number, number] = activeObject.size ? [
-      activeObject.size[0] * scaleRatio,
-      activeObject.size[1] * scaleRatio,
-      activeObject.size[2] * scaleRatio
-    ] : [0, 0, 0];
-
-    const finalPos = clampPositionToRoom(activeObject.position, roomDimensions, newSize, activeObject.rotation);
+    const finalPos = clampPositionToRoom(activeObject.position, roomDimensions, activeObject.size, activeObject.rotation, newScale);
     
     updateObjectScale(activeObjectId, newScale);
     updateObjectTransform(activeObjectId, finalPos, activeObject.rotation);

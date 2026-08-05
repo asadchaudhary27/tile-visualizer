@@ -25,11 +25,7 @@ export const ASSET_CATEGORIES = [
           { id: 'glb:BED/1 (62)', label: 'Bunk Bed', type: 'glb:BED/1 (62)', icon: Box },
           { id: 'glb:BED/1 (8)', label: 'Round Bed', type: 'glb:BED/1 (8)', icon: Box },
           { id: 'glb:BED/1 (9)', label: 'Luxury Canopy Bed', type: 'glb:BED/1 (9)', icon: Box },
-          { id: 'bed-queen', label: 'Queen Bed', type: 'BedQueen', icon: Bed },
-          { id: 'bed-king', label: 'King Bed', type: 'KingBed', icon: Bed },
-          { id: 'bed-single', label: 'Single Bed', type: 'SingleBed', icon: Bed },
-          { id: 'bed-bunk', label: 'Bunk Bed', type: 'BunkBed', icon: Bed },
-          { id: 'detailed-bed', label: 'Detailed Bed', type: 'DetailedBed', icon: Bed },
+
         ]
       },
       {
@@ -40,10 +36,7 @@ export const ASSET_CATEGORIES = [
           { id: 'glb:TABLE/1 (49)', label: 'Nightstand', type: 'glb:TABLE/1 (49)', icon: Box },
           { id: 'glb:TABLE/1 (52)', label: 'Dressing Table', type: 'glb:TABLE/1 (52)', icon: Box },
           { id: 'glb:TABLE/1 (56)', label: 'End Table', type: 'glb:TABLE/1 (56)', icon: Box },
-          { id: 'wardrobe', label: 'Wardrobe', type: 'Wardrobe', icon: Box },
-          { id: 'nightstand', label: 'Nightstand', type: 'Nightstand', icon: Box },
-          { id: 'dressing-table', label: 'Dressing Table', type: 'DressingTable', icon: Box },
-          { id: 'dressing-stool', label: 'Stool', type: 'DressingStool', icon: Box },
+
         ]
       }
     ]
@@ -80,9 +73,7 @@ export const ASSET_CATEGORIES = [
           { id: 'glb:CHAIR/1 (57)', label: 'Wooden Rocking Chair', type: 'glb:CHAIR/1 (57)', icon: Box },
           { id: 'glb:CHAIR/1 (60)', label: 'Modern Gaming Chair', type: 'glb:CHAIR/1 (60)', icon: Box },
           { id: 'glb:CHAIR/1 (7)', label: 'Minimalist Stool', type: 'glb:CHAIR/1 (7)', icon: Box },
-          { id: 'luxury-sofa', label: 'Luxury Sofa', type: 'LuxurySofa', icon: Sofa },
-          { id: 'sofa', label: 'Basic Sofa', type: 'Sofa', icon: Sofa },
-          { id: 'armchair', label: 'Armchair', type: 'Armchair', icon: Armchair },
+
         ]
       },
       {
@@ -92,9 +83,7 @@ export const ASSET_CATEGORIES = [
           // Excluded "Side Table" as requested
           { id: 'glb:TABLE/1 (20)', label: 'Glass Coffee Table', type: 'glb:TABLE/1 (20)', icon: Box },
           { id: 'glb:TABLE/1 (29)', label: 'Console Table', type: 'glb:TABLE/1 (29)', icon: Box },
-          { id: 'coffee-table', label: 'Coffee Table', type: 'CoffeeTable', icon: Box },
-          { id: 'tv-stand', label: 'TV Stand', type: 'TVStand', icon: Box },
-          { id: 'tv-wall', label: 'TV Wall Unit', type: 'TVWall', icon: Box },
+
         ]
       }
     ]
@@ -136,10 +125,7 @@ export const ASSET_CATEGORIES = [
           { id: 'glb:KITCHEN/1 (50)', label: 'Farmhouse Sink Cabinet', type: 'glb:KITCHEN/1 (50)', icon: Box },
           { id: 'glb:KITCHEN/1 (54)', label: 'Pantry Cabinet', type: 'glb:KITCHEN/1 (54)', icon: Box },
           { id: 'glb:KITCHEN/1 (66)', label: 'Glass Door Cabinets', type: 'glb:KITCHEN/1 (66)', icon: Box },
-          { id: 'kitchen-island', label: 'Basic Island', type: 'KitchenIsland', icon: Box },
-          { id: 'detailed-island', label: 'Detailed Island', type: 'DetailedIsland', icon: Box },
-          { id: 'kitchen-cabinets', label: 'Basic Cabinets', type: 'KitchenCabinets', icon: Box },
-          { id: 'detailed-lower-cab', label: 'Detailed Lower Cab', type: 'DetailedLowerCab', icon: Box },
+
           { id: 'detailed-upper-cab', label: 'Detailed Upper Cab', type: 'DetailedUpperCab', icon: Box },
           { id: 'fridge', label: 'Fridge', type: 'Fridge', icon: Box },
           { id: 'detailed-fridge', label: 'Detailed Fridge', type: 'DetailedFridge', icon: Box },
@@ -153,9 +139,7 @@ export const ASSET_CATEGORIES = [
           { id: 'glb:TABLE/1 (32)', label: 'Round Dining Table', type: 'glb:TABLE/1 (32)', icon: Box },
           { id: 'glb:TABLE/1 (67)', label: 'Large Dining Table', type: 'glb:TABLE/1 (67)', icon: Box },
           { id: 'glb:CHAIR/1 (30)', label: 'Dining Chair', type: 'glb:CHAIR/1 (30)', icon: Box },
-          { id: 'dining-table', label: 'Basic Dining Table', type: 'DiningTable', icon: Box },
-          { id: 'dining-chair', label: 'Basic Dining Chair', type: 'DiningChair', icon: Box },
-          { id: 'bar-stool', label: 'Bar Stool', type: 'BarStool', icon: Box },
+
         ]
       }
     ]
@@ -198,8 +182,7 @@ export const ASSET_CATEGORIES = [
           { id: 'shower', label: 'Shower Cabin', type: 'Shower', icon: Box },
           { id: 'bathtub', label: 'Basic Bathtub', type: 'Bathtub', icon: Box },
           { id: 'detailed-bathtub', label: 'Detailed Bathtub', type: 'DetailedBathtub', icon: Box },
-          { id: 'towel-rail', label: 'Towel Rail', type: 'TowelRail', icon: Box },
-          { id: 'detailed-towel-rack', label: 'Detailed Towel Rack', type: 'DetailedTowelRack', icon: Box },
+
         ]
       }
     ]

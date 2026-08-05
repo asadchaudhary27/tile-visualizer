@@ -80,7 +80,7 @@ class ModelErrorBoundary extends React.Component<{children: React.ReactNode}, {h
   static getDerivedStateFromError(_error: any) {
     return { hasError: true };
   }
-  componentDidCatch(_error: any, _errorInfo: any) {
+  componentDidCatch(error: any, _errorInfo: any) {
     console.error("Model failed to load:", error);
   }
   render() {

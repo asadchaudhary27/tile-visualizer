@@ -6,26 +6,24 @@ import { ASSET_CATEGORIES } from '../lib/assetCatalog';
 import { findEmptySpawnPosition } from '../utils/autoLayout';
 
 function AssetThumbnail({ asset, category }: { asset: any, category: any }) {
-  const thumbnails = useDesignStore(s => s.thumbnails);
-  const queueThumbnail = useDesignStore(s => s.queueThumbnail);
-  const dataUrl = thumbnails[asset.type];
+  const [imageError, setImageError] = React.useState(false);
+  
+  // Try to load static thumbnail first
+  const filename = asset.type.replace('glb:', '');
+  const thumbnailUrl = encodeURI(`/thumbnails/${filename}.png`);
 
-  React.useEffect(() => {
-    if (!dataUrl && asset.type.startsWith('glb:')) {
-      queueThumbnail(asset.type);
-    }
-  }, [dataUrl, asset.type, queueThumbnail]);
-
-  if (dataUrl) {
+  if (!imageError && asset.type.startsWith('glb:')) {
     return (
       <img 
-        src={dataUrl} 
-        alt={asset.label} 
+        src={thumbnailUrl} 
+        alt={asset.label}
+        onError={() => setImageError(true)}
         className="w-16 h-16 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] opacity-70 group-hover:opacity-100 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-500 relative z-10" 
       />
     );
   }
 
+  // Fallback to generic icon if image fails or not a GLB
   return <asset.icon size={32} className={`relative z-10 text-white/40 group-hover:${category.color} transition-colors duration-300 group-hover:scale-110`} strokeWidth={1.5} />;
 }
 

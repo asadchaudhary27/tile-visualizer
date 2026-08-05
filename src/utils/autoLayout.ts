@@ -3,41 +3,28 @@ import type { RoomDimensions, PlacedObject } from '../lib/types';
 
 const ASSET_CATALOG = {
   bedroom: [
-    { type: 'BedQueen', group: 'bed', depth: 2.2, width: 1.6 },
-    { type: 'DetailedBed', group: 'bed', depth: 2.2, width: 1.8 },
-    { type: 'BlueDetailedBed', group: 'bed', depth: 2.2, width: 1.8 },
-    { type: 'Wardrobe', group: 'storage', depth: 0.6, width: 1.2 },
-    { type: 'Nightstand', group: 'accent', depth: 0.4, width: 0.5 },
-    { type: 'DressingTable', group: 'accent', depth: 0.5, width: 1.2 },
-    { type: 'ModernBench', group: 'accent', depth: 0.4, width: 1.2 },
-    { type: 'AreaRug', group: 'rug', depth: 2.5, width: 2.0 },
+    { type: 'glb:BED/1 (14)', group: 'bed', depth: 2.2, width: 1.6 },
+    { type: 'glb:BED/1 (13)', group: 'bed', depth: 2.2, width: 1.8 },
+    { type: 'glb:BED/1 (42)', group: 'bed', depth: 2.2, width: 1.8 },
+    { type: 'glb:TABLE/1 (52)', group: 'storage', depth: 0.6, width: 1.2 },
+    { type: 'glb:TABLE/1 (49)', group: 'accent', depth: 0.4, width: 0.5 },
   ],
   kitchen: [
-    { type: 'KitchenIsland', group: 'island', depth: 1.0, width: 2.5 },
-    { type: 'DetailedIsland', group: 'island', depth: 1.0, width: 2.5 },
-    { type: 'KitchenCabinets', group: 'cabinets', depth: 0.6, width: 3.0 },
-    { type: 'DetailedLowerCab', group: 'cabinets', depth: 0.6, width: 3.0 },
-    { type: 'Fridge', group: 'appliance', depth: 0.7, width: 0.9 },
-    { type: 'DetailedFridge', group: 'appliance', depth: 0.7, width: 0.9 },
-    { type: 'DiningTable', group: 'dining', depth: 1.0, width: 1.8 },
-    { type: 'BarStool', group: 'accent', depth: 0.4, width: 0.4 },
+    { type: 'glb:KITCHEN/1 (11)', group: 'island', depth: 1.0, width: 2.5 },
+    { type: 'glb:KITCHEN/1 (15)', group: 'cabinets', depth: 0.6, width: 3.0 },
+    { type: 'glb:TABLE/1 (10)', group: 'dining', depth: 1.0, width: 1.8 },
   ],
   bathroom: [
-    { type: 'Vanity', group: 'vanity', depth: 0.6, width: 1.2 },
-    { type: 'DoubleVanity', group: 'vanity', depth: 0.6, width: 1.8 },
-    { type: 'DetailedVanity', group: 'vanity', depth: 0.6, width: 1.2 },
-    { type: 'Toilet', group: 'toilet', depth: 0.7, width: 0.4 },
-    { type: 'DetailedToilet', group: 'toilet', depth: 0.7, width: 0.4 },
-    { type: 'Shower', group: 'shower', depth: 1.0, width: 1.0 },
-    { type: 'DetailedBathtub', group: 'tub', depth: 0.8, width: 1.6 },
-    { type: 'DetailedTowelRack', group: 'accent', depth: 0.2, width: 0.6 },
+    { type: 'glb:VANITY/1 (35)', group: 'vanity', depth: 0.6, width: 1.2 },
+    { type: 'glb:VANITY/1 (37)', group: 'vanity', depth: 0.6, width: 1.8 },
+    { type: 'glb:ROOM/1 (28)', group: 'toilet', depth: 0.7, width: 0.4 },
   ]
 };
 
 const COMMON_ACCENTS = [
-  { type: 'FloorPlant', depth: 0.5, width: 0.5 },
-  { type: 'FloorLamp', depth: 0.4, width: 0.4 },
-  { type: 'SideTable', depth: 0.5, width: 0.5 }
+  { type: 'glb:1 (34)', depth: 0.5, width: 0.5 },
+  { type: 'glb:1 (39)', depth: 0.4, width: 0.4 },
+  { type: 'glb:1 (40)', depth: 0.5, width: 0.5 }
 ];
 
 function getRandomItem(arr: any[]) {
@@ -63,7 +50,6 @@ export function generateAutoLayoutData(dimensions: RoomDimensions, roomType: str
   
   if (type === 'bedroom') {
     const bed = getRandomItem(ASSET_CATALOG.bedroom.filter(i => i.group === 'bed'));
-    const rug = getRandomItem(ASSET_CATALOG.bedroom.filter(i => i.group === 'rug'));
     const storage = getRandomItem(ASSET_CATALOG.bedroom.filter(i => i.group === 'storage'));
     
     // Bed against back wall
@@ -71,14 +57,6 @@ export function generateAutoLayoutData(dimensions: RoomDimensions, roomType: str
       id: uuidv4(),
       assetType: bed.type,
       position: [0, 0, -d2 + bed.depth / 2 + 0.1],
-      rotation: [0, 0, 0]
-    });
-    
-    // Rug under bed
-    objects.push({
-      id: uuidv4(),
-      assetType: rug.type,
-      position: [0, 0, -d2 + bed.depth / 2 + 0.5],
       rotation: [0, 0, 0]
     });
 
@@ -110,21 +88,12 @@ export function generateAutoLayoutData(dimensions: RoomDimensions, roomType: str
   } else if (type === 'kitchen') {
     const island = getRandomItem(ASSET_CATALOG.kitchen.filter(i => i.group === 'island'));
     const cabs = getRandomItem(ASSET_CATALOG.kitchen.filter(i => i.group === 'cabinets'));
-    const fridge = getRandomItem(ASSET_CATALOG.kitchen.filter(i => i.group === 'appliance'));
     
     // Cabinets against back wall
     objects.push({
       id: uuidv4(),
       assetType: cabs.type,
       position: [0, 0, -d2 + cabs.depth / 2 + 0.1],
-      rotation: [0, 0, 0]
-    });
-
-    // Fridge next to cabinets
-    objects.push({
-      id: uuidv4(),
-      assetType: fridge.type,
-      position: [cabs.width / 2 + 0.5, 0, -d2 + fridge.depth / 2 + 0.1],
       rotation: [0, 0, 0]
     });
 
@@ -136,25 +105,11 @@ export function generateAutoLayoutData(dimensions: RoomDimensions, roomType: str
         position: [0, 0, -d2 + cabs.depth + 1.2],
         rotation: [0, 0, 0]
       });
-      // Stools
-      objects.push({
-        id: uuidv4(),
-        assetType: 'BarStool',
-        position: [-0.6, 0, -d2 + cabs.depth + 1.8],
-        rotation: [0, Math.PI, 0]
-      });
-      objects.push({
-        id: uuidv4(),
-        assetType: 'BarStool',
-        position: [0.6, 0, -d2 + cabs.depth + 1.8],
-        rotation: [0, Math.PI, 0]
-      });
     }
 
   } else if (type === 'bathroom') {
     const vanity = getRandomItem(ASSET_CATALOG.bathroom.filter(i => i.group === 'vanity'));
     const toilet = getRandomItem(ASSET_CATALOG.bathroom.filter(i => i.group === 'toilet'));
-    const shower = getRandomItem(ASSET_CATALOG.bathroom.filter(i => i.group === 'shower'));
     
     // Vanity against back wall
     objects.push({
@@ -171,24 +126,6 @@ export function generateAutoLayoutData(dimensions: RoomDimensions, roomType: str
       position: [vanity.width / 2 + 0.6, 0, -d2 + toilet.depth / 2 + 0.1],
       rotation: [0, 0, 0]
     });
-
-    // Shower in corner
-    objects.push({
-      id: uuidv4(),
-      assetType: shower.type,
-      position: [-w2 + shower.width / 2, 0, -d2 + shower.depth / 2],
-      rotation: [0, 0, 0]
-    });
-
-    // Bathtub if enough space
-    if (dimensions.length > 3.5 && r() > 0.5) {
-      objects.push({
-        id: uuidv4(),
-        assetType: 'DetailedBathtub',
-        position: [w2 - 0.8, 0, 0],
-        rotation: [0, -Math.PI / 2, 0]
-      });
-    }
   }
 
   // Common Accents (Randomly scatter 1-3 plants/lamps)

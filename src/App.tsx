@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import React from 'react';
 import RoomSelectorScreen from './components/RoomSelectorScreen';
 import RoomEditorScreen from './components/RoomEditorScreen';
 import ThreeDVisualizer from './components/ThreeDVisualizer';
 import TileCalculatorScreen from './components/TileCalculatorScreen';
 import ConsultationScreen from './components/ConsultationScreen';
-import ThumbnailGenerator from './components/ThumbnailGenerator';
 import { Logo } from './components/Logo';
 import type { Room } from './lib/types';
 import { ChevronLeft } from 'lucide-react';
+import { useState } from 'react';
 
 function App() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
@@ -95,7 +95,6 @@ function App() {
           />
         )}
       </main>
-      <ThumbnailGenerator />
     </div>
   );
 }

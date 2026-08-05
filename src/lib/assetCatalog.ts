@@ -104,15 +104,14 @@ export const ASSET_CATEGORIES = [
         id: 'stove-oven',
         label: 'Stove & Oven',
         assets: [
-          { id: 'stove', label: 'Electric Stove', type: 'Stove', icon: Box },
-          { id: 'detailed-oven', label: 'Detailed Oven', type: 'DetailedOven', icon: Box },
+          // No GLB stove yet
         ]
       },
       {
         id: 'range-hood',
         label: 'Range Hood',
         assets: [
-          { id: 'range-hood', label: 'Range Hood', type: 'RangeHood', icon: Box },
+          // No GLB hood yet
         ]
       },
       {
@@ -129,10 +128,6 @@ export const ASSET_CATEGORIES = [
           { id: 'glb:KITCHEN/1 (50)', label: 'Farmhouse Sink Cabinet', type: 'glb:KITCHEN/1 (50)', icon: Box },
           { id: 'glb:KITCHEN/1 (54)', label: 'Pantry Cabinet', type: 'glb:KITCHEN/1 (54)', icon: Box },
           { id: 'glb:KITCHEN/1 (66)', label: 'Glass Door Cabinets', type: 'glb:KITCHEN/1 (66)', icon: Box },
-
-          { id: 'detailed-upper-cab', label: 'Detailed Upper Cab', type: 'DetailedUpperCab', icon: Box },
-          { id: 'fridge', label: 'Fridge', type: 'Fridge', icon: Box },
-          { id: 'detailed-fridge', label: 'Detailed Fridge', type: 'DetailedFridge', icon: Box },
         ]
       },
       {
@@ -161,7 +156,6 @@ export const ASSET_CATEGORIES = [
         label: 'Bidet Spray',
         assets: [
           { id: 'glb:ROOM/1 (28)', label: 'Bidet System', type: 'glb:ROOM/1 (28)', icon: Box },
-          { id: 'bidet-sprayer', label: 'Bidet Sprayer', type: 'BidetSprayer', icon: Box },
         ]
       },
       {
@@ -172,21 +166,13 @@ export const ASSET_CATEGORIES = [
           { id: 'glb:VANITY/1 (35)', label: 'Classic Vanity', type: 'glb:VANITY/1 (35)', icon: Box },
           { id: 'glb:VANITY/1 (37)', label: 'Floating Vanity', type: 'glb:VANITY/1 (37)', icon: Box },
           { id: 'glb:VANITY/1 (70)', label: 'Double Sink Vanity', type: 'glb:VANITY/1 (70)', icon: Box },
-          { id: 'vanity', label: 'Basic Vanity', type: 'Vanity', icon: Box },
-          { id: 'double-vanity', label: 'Double Vanity', type: 'DoubleVanity', icon: Box },
-          { id: 'detailed-vanity', label: 'Detailed Vanity', type: 'DetailedVanity', icon: Box },
         ]
       },
       {
         id: 'accessories',
         label: 'Accessories',
         assets: [
-          { id: 'toilet', label: 'Basic Toilet', type: 'Toilet', icon: Box },
-          { id: 'detailed-toilet', label: 'Detailed Toilet', type: 'DetailedToilet', icon: Box },
-          { id: 'shower', label: 'Shower Cabin', type: 'Shower', icon: Box },
-          { id: 'bathtub', label: 'Basic Bathtub', type: 'Bathtub', icon: Box },
-          { id: 'detailed-bathtub', label: 'Detailed Bathtub', type: 'DetailedBathtub', icon: Box },
-
+          // No GLB accessories yet
         ]
       }
     ]

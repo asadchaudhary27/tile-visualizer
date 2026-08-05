@@ -31,6 +31,8 @@ export default function DraggableFurniture({ id, assetType, position, rotation, 
   const isActive = activeObjectId === id && isFurnitureEditMode;
   const showHoverEffect = isHovered && isFurnitureEditMode && !isActive;
 
+  const frameCount = useRef(0);
+
   useFrame(() => {
     if (groupRef.current) {
       // Smoothly animate scale on hover
@@ -38,7 +40,8 @@ export default function DraggableFurniture({ id, assetType, position, rotation, 
       groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.15);
     }
 
-    if (!hasCentered.current && groupRef.current && innerGroupRef.current) {
+    frameCount.current++;
+    if (frameCount.current % 30 === 0 && groupRef.current && innerGroupRef.current) {
       // Temporarily reset group to identity to measure raw local bounds
       const oldPos = groupRef.current.position.clone();
       const oldRot = groupRef.current.rotation.clone();
@@ -52,20 +55,30 @@ export default function DraggableFurniture({ id, assetType, position, rotation, 
       innerGroupRef.current.position.set(0,0,0);
       innerGroupRef.current.updateMatrixWorld(true);
       
-      const box = new THREE.Box3().setFromObject(innerGroupRef.current);
+      const box = new THREE.Box3();
+      innerGroupRef.current.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const meshBox = new THREE.Box3().setFromObject(child);
+          box.union(meshBox);
+        }
+      });
+      if (box.isEmpty()) box.setFromObject(innerGroupRef.current);
+
       const size = new THREE.Vector3();
       box.getSize(size);
       
       if (size.x > 0 && size.y > 0 && size.z > 0) {
-        const center = new THREE.Vector3();
-        box.getCenter(center);
+        // Compare with current store size to prevent infinite update loops
+        const currentObj = useDesignStore.getState().placedObjects.find(o => o.id === id);
+        const currentSize = currentObj?.size;
         
-        // Offset inner geometry so its center is exactly (0,0,0) locally, and rests on Y=0
-        innerGroupRef.current.position.set(-center.x, -box.min.y, -center.z);
-        
-        // Report the RAW LOCAL size to the store (unscaled, unrotated)
-        updateObjectSize(id, [size.x, size.y, size.z]);
-        hasCentered.current = true;
+        if (!currentSize || 
+            Math.abs(currentSize[0] - size.x) > 0.01 || 
+            Math.abs(currentSize[1] - size.y) > 0.01 || 
+            Math.abs(currentSize[2] - size.z) > 0.01) {
+          
+          updateObjectSize(id, [size.x, size.y, size.z]);
+        }
       }
       
       // Restore previous transforms

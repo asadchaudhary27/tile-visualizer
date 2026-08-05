@@ -51,10 +51,10 @@ function saveRoomPlugin() {
               
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ success: true }));
-            } catch (err: any) {
+            } catch (error) {
+              console.error(error);
               res.statusCode = 500;
-              res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ success: false, error: err.message }));
+              res.end(JSON.stringify({ success: false, error: (error as Error).message }));
             }
           });
         } else {
@@ -62,7 +62,7 @@ function saveRoomPlugin() {
         }
       });
     }
-  };
+  }
 }
 
 // https://vite.dev/config/
